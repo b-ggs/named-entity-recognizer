@@ -12,15 +12,17 @@ public class Classifier {
     public String label;
     public String regex;
     public Writer writer;
+    public Scanner scanner;
     public int counter = 0;
     public int trueCounter = 0;
     public HashMap<String, String> map = new HashMap<String, String>();
     public HashMap<String, Boolean> verifyMap = new HashMap<String, Boolean>();
 
-    public Classifier(String label, String regex, Writer writer) {
+    public Classifier(String label, String regex, Writer writer, Scanner scanner) {
         this.label = label;
         this.regex = regex;
         this.writer = writer;
+        this.scanner = scanner;
     }
 
     public void classify(String line) {
@@ -56,21 +58,19 @@ public class Classifier {
         int index = 0;
         Object[] keys = map.keySet().toArray();
         String value = "";
-        Scanner sc = new Scanner(System.in);
         for(int i = 0; i < iterations; i++) {
             do {
                 Random r = new Random();
                 index = r.nextInt(keys.length);
                 value = map.get(keys[index]);
             } while (verifyMap.containsKey(keys[index]));
-            ask((String) keys[index], value, (i + 1) + " of " + iterations, sc);
+            ask((String) keys[index], value, (i + 1) + " of " + iterations);
         }
-        sc.close();
     }
 
-    public void ask(String key, String value, String progress, Scanner sc) {
+    public void ask(String key, String value, String progress) {
         System.out.println(label + " " + progress + " - Is " + key + " an instance of " + value + "? (y/n): ");
-        String in = sc.next();
+        String in = scanner.nextLine();
         boolean response = in.equals("y");
         System.out.println(response);
         verifyMap.put(key, response);
@@ -99,6 +99,7 @@ public class Classifier {
 
     public void writeVerificationCounter() {
         countVerification();
-        writer.writeLine("Verification: " + label + " (" + trueCounter + " correct of " + verifyMap.keySet().toArray().length + ")");
+        int max = verifyMap.keySet().toArray().length;
+        writer.writeLine("Verification: " + label + ", " + trueCounter + " correct of " + max + " (" + (trueCounter * 1.00 / max) * 100 + "%)");
     }
 }
