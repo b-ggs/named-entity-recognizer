@@ -90,6 +90,7 @@ public class Classifier {
         Object[] keys = verifyMap.keySet().toArray();
         ArrayList<String> lines = new ArrayList<String>();
         trueCounter = 0;
+        countVerification();
         writer.writeLine("Verification: " + label + " (" + trueCounter  + " correct of " + keys.length + ")");
         for(Object o : keys) {
             String key = (String) o;
